@@ -1,6 +1,11 @@
 package com.example.camel_micro_a;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +40,6 @@ public class MyFirstTimerRouter extends RouteBuilder {
 		from("timer:third-timer")
 			.bean(getCurrentTimeBean)
 			.to("log:third-timer");
-		*/
 
 		// Processing & Transformation 차이
 		// Processing : 메시지를 변경하지 않고 메시지를 처리하는 것
@@ -48,6 +52,18 @@ public class MyFirstTimerRouter extends RouteBuilder {
 			.bean(getCurrentTimeBean)
 			.log("after transform bean : ${body}")
 			.bean(simpleLoggingProcessingComponent)
+			.log("after processing bean : ${body}")
+			.to("log:fourth-timer");
+		*/
+
+		// Processor를 상속받아 사용하는 방법
+		from("timer:fourth-timer")
+			.log("after from : ${body}")
+			.transform().constant("My constant message")
+			.log("after transform : ${body}")
+			.bean(getCurrentTimeBean)
+			.log("after transform bean : ${body}")
+			.process(new SimpleLoggingProcessor())
 			.log("after processing bean : ${body}")
 			.to("log:fourth-timer");
 	}
@@ -74,6 +90,18 @@ class SimpleLoggingProcessingComponent {
 
 	public void process(String message) {
 		logger.info("SimpleLoggingProcessingComponent {}", message);
+	}
+
+}
+
+// Processor를 상속받아 사용하는 방법
+class SimpleLoggingProcessor implements Processor {
+
+	private Logger logger = LoggerFactory.getLogger(SimpleLoggingProcessor.class);
+
+	@Override
+	public void process(Exchange exchange) throws Exception {
+		logger.info("SimpleLoggingProcessor {}", exchange.getMessage().getBody());
 	}
 
 }
