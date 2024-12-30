@@ -1,24 +1,20 @@
-package com.example.camel_micro_a;
+package com.example.camel_micro_a.routes.a;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+import lombok.RequiredArgsConstructor;
+
+// @Component
+@RequiredArgsConstructor
 public class MyFirstTimerRouter extends RouteBuilder {
 
-	@Autowired
-	private GetCurrentTimeBean getCurrentTimeBean;
-
-	@Autowired
-	private SimpleLoggingProcessingComponent simpleLoggingProcessingComponent;
+	private final GetCurrentTimeBean getCurrentTimeBean;
+	private final SimpleLoggingProcessingComponent simpleLoggingProcessingComponent;
 
 	// Endpoint 1 : timer
 	// transformation : change the message
